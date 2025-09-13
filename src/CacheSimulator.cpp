@@ -8,7 +8,7 @@ uint32_t g_cfg_num_ways = 4;              // 4-way set associative
 uint32_t g_cfg_replacement_policy = 0; // 0: LRU, 1: FIFO
 bool g_cfg_write_allocate = true; // true: Write Allocate, false: No Write Allocate
 string g_cfg_trace_filename = "";
-//string g_cfg_stats_filename = "";
+string g_cfg_stats_filename = "cache_stats.txt";
 
 
 
@@ -18,15 +18,14 @@ void printUsage()
         cout << "Options:\n";
         cout << "  -h                           Show this help message\n";
         cout << "  -trace <trace_file>          Specify trace input file\n";
-        //cout << "  -stat <stats_file>           Specify stats output file\n";
+        cout << "  -stat <stats_file>           Specify stats output file\n";
         cout << "  -cs <cache_size_KB>          Specify the cache size in KB. eg. -s 2 creates 2KB cache\n";
         cout << "  -ls <cache_line_size_B>      Specify cache line size in bytes (default 0: 64B), else: Absolute fixed size\n";
         cout << "  -w <num_of_ways>             Specify the associativity of cache. (default: Fully Associative. 0: Direct Mapped, else: specified sets).\n";
         cout << "  -rp <replacement_policy>     Specify the cache replacement policy. (default: 0: LRU, 1: FIFO)\n";
         cout << "  -wap <write_allocate_policy> Specify the write allocate policy. (default: 1: Write Allocate, 0: No Write Allocate)\n";
-        cout << "Example: CacheSimulator.exe -cs 256 -ls 64 -w 4 -rp 0 -trace trace.txt -stat cache_stats.txt\n";
-        cout << "This will run the simulation with a cache of size 256KB. Each cache line is 64B wide. Cache has 4-way set associativity. LRU replacement policy.\n";
-        cout << "Note: The -stat option is not implemented yet.\n";
+        cout << "Example: CacheSimulator.exe -cs 256 -ls 64 -w 4 -rp 0 -wap 0 -trace trace.txt -stat cache_stats.txt\n";
+        cout << "This will run the simulation with a cache of size 256KB. Each cache line is 64B wide. Cache has 4-way set associativity. LRU replacement policy. Write-no-allocate policy.\n";
         cout << endl;
 }
 
@@ -48,12 +47,12 @@ int parseOptions(int argc, char **argv)
     // Process command line arguments
     while (argc > 0)
     {
-        /*if (strcmp(*argv, "-stat") == 0)
+        if (strcmp(*argv, "-stat") == 0)
         {
             *argv++;
             argc--;
             g_cfg_stats_filename = *argv;
-        }*/
+        }
         if (strcmp(*argv, "-trace") == 0)
         {
             *argv++;
@@ -119,9 +118,9 @@ int parseOptions(int argc, char **argv)
             *argv++;
             argc--;
             int wap = atoi(*argv);
-            if (wap == 0)
+            if (wap == 1)
                 g_cfg_write_allocate = true;
-            else if (wap == 1)
+            else if (wap == 0)
                 g_cfg_write_allocate = false;
             else
             {
@@ -155,13 +154,13 @@ int main(int argc, char **argv)
     cout << "Replacement Policy: \t" << (g_cfg_replacement_policy == 0 ? "LRU" : "FIFO") << endl;
     cout << "Write Allocate Policy: \t" << (g_cfg_write_allocate ? "Write Allocate" : "No Write Allocate") << endl;
     cout << "Trace file: \t\t" << ((g_cfg_trace_filename == "")? "Not set. Synthetic random traffic" : g_cfg_trace_filename) << endl;
-    //cout << "Stats file: \t\t" << g_cfg_stats_filename << endl;
+    cout << "Stats file: \t\t" << g_cfg_stats_filename << endl;
 
-    cache l1_cache(g_cfg_cache_size, g_cfg_line_size, g_cfg_num_ways, g_cfg_replacement_policy, g_cfg_write_allocate);
+    cache l1_cache(g_cfg_cache_size, g_cfg_line_size, g_cfg_num_ways, g_cfg_replacement_policy, g_cfg_write_allocate, g_cfg_stats_filename);
 
     // Generate synthetic trace for testing
     cout << "Max addressable space: \t0x" << hex << g_cfg_cache_size - 1 << " bytes" << dec << endl;
-        // Define range
+    // Define range
     int min = 1;
     int max = g_cfg_cache_size - 1;
 

@@ -1,9 +1,10 @@
 #include "cache.h"
 
 
-cache::cache(uint32_t size_kb, uint32_t line_size, uint32_t num_ways, uint32_t replacement_policy, bool write_allocate)
+
+cache::cache(uint32_t size_kb, uint32_t line_size, uint32_t num_ways, uint32_t replacement_policy, bool write_allocate, string stats_filename)
     : m_cache_size(size_kb * 1024), m_line_size(line_size), m_num_ways(num_ways), m_replacement_policy(replacement_policy),
-      m_stat_hits(0), m_stat_misses(0), m_stat_accesses(0), m_write_allocate(true)
+      m_stat_hits(0), m_stat_misses(0), m_stat_accesses(0), m_write_allocate(true), m_stats_filename(stats_filename)
 {
     if (m_line_size <= 0 || (m_line_size & (m_line_size - 1)) != 0)
     {
@@ -22,12 +23,28 @@ cache::cache(uint32_t size_kb, uint32_t line_size, uint32_t num_ways, uint32_t r
         throw invalid_argument("Replacement policy must be 0 (LRU) or 1 (FIFO).");
     }
 
+    m_stats_file.open(m_stats_filename, ios::out);
+    if (!m_stats_file.is_open())
+    {
+        throw runtime_error("Failed to open stats file: " + m_stats_filename);
+    }   
+
     m_num_lines = m_cache_size / m_line_size;
+    m_stats_file << "Cache Size (KB) \t\t" << m_cache_size / 1024 << endl;
+    m_stats_file << "Line Size (bytes) \t\t" << m_line_size << endl;
+    m_stats_file << "Number of Ways \t\t\t" << (m_num_ways == 0 ? 1 : m_num_ways) << endl;
+    m_stats_file << "Replacement Policy \t\t" << (m_replacement_policy == 0 ? "LRU" : "FIFO") << endl;
+    m_stats_file << "Write Allocate Policy \t\t" << (m_write_allocate ? "Write Allocate" : "No Write Allocate") << endl;
+
     m_num_sets = (m_num_ways == 0) ? m_num_lines : (m_num_lines / m_num_ways);
 
     m_offset_bits = (uint32_t)log2(m_line_size);
     m_index_bits = (uint32_t)log2(m_num_sets);
     m_tag_bits = 64 - m_index_bits - m_offset_bits;
+
+    m_stats_file << "Offset bits: \t\t\t" << m_offset_bits << endl;
+    m_stats_file << "Index bits: \t\t\t" << m_index_bits << endl;
+    m_stats_file << "Tag bits: \t\t\t" << m_tag_bits << endl;
 
     m_offset_fld_lsb = 0;
     m_offset_fld_msb = m_offset_bits - 1;
@@ -43,6 +60,11 @@ cache::~cache()
 {
     // Put stats in the stats file
     printStats();
+
+    if (m_stats_file.is_open())
+    {
+        m_stats_file.close();
+    }
 }
 
 void cache::resetStats()
@@ -64,10 +86,17 @@ void cache::printStats()
     cout << "  Replacement Policy: \t" << (m_replacement_policy == 0 ? "LRU" : "FIFO") << "\n";
     cout << "  Write Allocate: \t" << (m_write_allocate ? "Yes" : "No") << "\n";
     cout << "  Total Accesses: \t" << m_stat_accesses << "\n";
+    m_stats_file << "Total Accesses: \t\t" << m_stat_accesses << "\n";
     cout << "  Total Hits: \t\t" << m_stat_hits << "\n";
+    m_stats_file << "Total Hits: \t\t\t" << m_stat_hits << "\n";
     cout << "  Total Misses: \t" << m_stat_misses << "\n";
+    m_stats_file << "Total Misses: \t\t\t" << m_stat_misses << "\n";
     double hit_rate = (m_stat_accesses > 0) ? (static_cast<double>(m_stat_hits) / m_stat_accesses) * 100.0 : 0.0;
     cout << "  Hit Rate: \t\t" << hit_rate << "%\n";
+    m_stats_file << "Hit Rate: \t\t\t" << hit_rate << "%\n";
+    cout << "  Miss Rate: \t\t" << (100.0 - hit_rate) << "%\n";
+    m_stats_file << "Miss Rate: \t\t\t" << (100.0 - hit_rate) << "%\n";
+    cout << "------------------------------------------\n";
 }
 
 void cache::accessAddress(uint64_t address, bool is_write)

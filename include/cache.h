@@ -2,6 +2,7 @@
 
 #include "cache_common.h"
 #include <vector>
+#include <fstream>
 
 struct cache_line
 {
@@ -16,7 +17,7 @@ struct cache_line
 class cache
 {
 public:
-    cache(uint32_t size_kb, uint32_t line_size, uint32_t num_ways, uint32_t replacement_policy, bool write_allocate);
+    cache(uint32_t size_kb, uint32_t line_size, uint32_t num_ways, uint32_t replacement_policy, bool write_allocate, string stats_filename);
     ~cache();
 
     bool access(uint64_t address, bool is_write);
@@ -66,6 +67,8 @@ private:
 
 
     // Statistics
+    string m_stats_filename = "";
+    fstream m_stats_file;
     uint32_t m_stat_hits = 0;
     uint32_t m_stat_misses = 0;
     uint32_t m_stat_accesses = 0;
