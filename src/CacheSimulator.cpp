@@ -160,7 +160,7 @@ int main(int argc, char **argv)
     cache l1_cache(g_cfg_cache_size, g_cfg_line_size, g_cfg_num_ways, g_cfg_replacement_policy, g_cfg_write_allocate);
 
     // Generate synthetic trace for testing
-    cout << "Max addressable space: 0x" << hex << g_cfg_cache_size << " bytes" << endl;
+    cout << "Max addressable space: \t0x" << hex << g_cfg_cache_size - 1 << " bytes" << dec << endl;
         // Define range
     int min = 1;
     int max = g_cfg_cache_size - 1;

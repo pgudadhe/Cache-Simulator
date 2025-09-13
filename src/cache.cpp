@@ -58,16 +58,16 @@ void cache::printStats()
     cout << "------------------------------------------\n";
     cout << "Cache Statistics:\n";
     cout << "------------------------------------------\n";
-    cout << "  Cache Size: " << m_cache_size / 1024 << " KB\n";
-    cout << "  Line Size: " << m_line_size << " bytes\n";
-    cout << "  Number of Ways: " << (m_num_ways == 0 ? 1 : m_num_ways) << "\n";
-    cout << "  Replacement Policy: " << (m_replacement_policy == 0 ? "LRU" : "FIFO") << "\n";
-    cout << "  Write Allocate: " << (m_write_allocate ? "Yes" : "No") << "\n";
-    cout << "  Total Accesses: " << m_stat_accesses << "\n";
-    cout << "  Total Hits: " << m_stat_hits << "\n";
-    cout << "  Total Misses: " << m_stat_misses << "\n";
+    cout << "  Cache Size: \t\t" << m_cache_size / 1024 << " KB\n";
+    cout << "  Line Size: \t\t" << m_line_size << " bytes\n";
+    cout << "  Number of Ways: \t" << (m_num_ways == 0 ? 1 : m_num_ways) << "\n";
+    cout << "  Replacement Policy: \t" << (m_replacement_policy == 0 ? "LRU" : "FIFO") << "\n";
+    cout << "  Write Allocate: \t" << (m_write_allocate ? "Yes" : "No") << "\n";
+    cout << "  Total Accesses: \t" << m_stat_accesses << "\n";
+    cout << "  Total Hits: \t\t" << m_stat_hits << "\n";
+    cout << "  Total Misses: \t" << m_stat_misses << "\n";
     double hit_rate = (m_stat_accesses > 0) ? (static_cast<double>(m_stat_hits) / m_stat_accesses) * 100.0 : 0.0;
-    cout << "  Hit Rate: " << hit_rate << "%\n";
+    cout << "  Hit Rate: \t\t" << hit_rate << "%\n";
 }
 
 void cache::accessAddress(uint64_t address, bool is_write)
