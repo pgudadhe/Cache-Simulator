@@ -57,7 +57,7 @@ Post run stats:
 ------------------------------------------
 Cache Statistics:
 ------------------------------------------
-  Cache Size:           1048576 KB
+  Cache Size:           1024 KB
   Line Size:            64 bytes
   Number of Ways:       16
   Replacement Policy:   LRU
