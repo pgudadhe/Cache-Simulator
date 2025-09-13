@@ -1,0 +1,14 @@
+cmake_minimum_required(VERSION 3.10)
+project(CacheSimulator VERSION 1.2.0 LANGUAGES CXX C)
+
+set(CMAKE_CXX_STANDARD 17) # Request C++17 standard
+
+include_directories("./include")
+file(GLOB SRC_FILES src/*.cpp)
+add_executable(CacheSimulator ${SRC_FILES})
+
+
+
+
+
+# set(MY_CUSTOM_OPTION ON CACHE BOOL "Enable my custom feature")
