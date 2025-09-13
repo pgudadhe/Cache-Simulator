@@ -17,10 +17,9 @@ struct cache_line
 class cache
 {
 public:
-    cache(uint32_t size_kb, uint32_t line_size, uint32_t num_ways, uint32_t replacement_policy, bool write_allocate, string stats_filename);
+    cache(uint32_t size_bytes, uint32_t line_size, uint32_t num_ways, uint32_t replacement_policy, bool write_allocate, string stats_filename);
     ~cache();
 
-    bool access(uint64_t address, bool is_write);
     void printStats();  
     void resetStats();
 

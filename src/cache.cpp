@@ -2,8 +2,8 @@
 
 
 
-cache::cache(uint32_t size_kb, uint32_t line_size, uint32_t num_ways, uint32_t replacement_policy, bool write_allocate, string stats_filename)
-    : m_cache_size(size_kb * 1024), m_line_size(line_size), m_num_ways(num_ways), m_replacement_policy(replacement_policy),
+cache::cache(uint32_t size_bytes, uint32_t line_size, uint32_t num_ways, uint32_t replacement_policy, bool write_allocate, string stats_filename)
+    : m_cache_size(size_bytes), m_line_size(line_size), m_num_ways(num_ways), m_replacement_policy(replacement_policy),
       m_stat_hits(0), m_stat_misses(0), m_stat_accesses(0), m_write_allocate(true), m_stats_filename(stats_filename)
 {
     if (m_line_size <= 0 || (m_line_size & (m_line_size - 1)) != 0)
@@ -80,7 +80,7 @@ void cache::printStats()
     cout << "------------------------------------------\n";
     cout << "Cache Statistics:\n";
     cout << "------------------------------------------\n";
-    cout << "  Cache Size: \t\t" << m_cache_size / 1024 << " KB\n";
+    cout << "  Cache Size: \t\t" << m_cache_size / 1024  << " KB\n";
     cout << "  Line Size: \t\t" << m_line_size << " bytes\n";
     cout << "  Number of Ways: \t" << (m_num_ways == 0 ? 1 : m_num_ways) << "\n";
     cout << "  Replacement Policy: \t" << (m_replacement_policy == 0 ? "LRU" : "FIFO") << "\n";
